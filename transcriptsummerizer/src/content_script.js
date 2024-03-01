@@ -39,7 +39,7 @@ async function paraphraseTranscript(data) {
 async function sendNotesToNotion(data) {
     const apiKey = env_var.NOTION_API_KEY
 
-    const databaseId = "";
+    const databaseId = "a6af54380b514826803b5b53edcf7329";
     const url = 'https://api.notion.com/v1/pages';
 
     try {
@@ -73,7 +73,7 @@ async function sendNotesToNotion(data) {
                             rich_text: [
                                 {
                                     type: 'text',
-                                    text: { content: "TODO add transcribed data", link: null },
+                                    text: { content: data, link: null },
                                     annotations: {
                                         bold: false,
                                         italic: false,
@@ -106,7 +106,16 @@ async function sendNotesToNotion(data) {
 
 /* ACTIVITY 1 use async logic to call the functions in order*/
 async function executeTasks() {
-    
+    await clickSubmitButton()
+        .then(fetchTranscriptData)
+        .then(paraphraseTranscript)
+        .then(paraphrasedTranscriptData => sendNotesToNotion(paraphrasedTranscriptData))
+        .then(response => {
+            console.log("Notes sent to Notion: ", response)
+        })
+        .catch(error => {
+            console.error('Error:', error)
+        })
 }
 
 executeTasks();
